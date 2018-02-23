@@ -1,0 +1,41 @@
+group 'com.dimitarg.userservice'
+version '0.1-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'https://oss.jfrog.org/artifactory/libs-snapshot/'
+        }
+    }
+    dependencies {
+        classpath group: 'com.novarto', name: 'java-conventions',
+                version: '0.9.1-SNAPSHOT'
+    }
+}
+
+subprojects {
+    group parent.group
+    version parent.version
+
+    repositories {
+        maven {
+            url 'https://oss.jfrog.org/artifactory/libs-snapshot/'
+        }
+    }
+
+    apply plugin: 'com.novarto.javaconventions'
+
+    javaconventions {
+        ci = System.getProperty("ci")!=null
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+        testRuntime group: 'org.hsqldb', name: 'hsqldb', version: '2.4.0'
+    }
+
+}
+
+

@@ -18,7 +18,7 @@ public class FlywayMigrator
         this.datasource = ds;
     }
 
-    void foo()
+    public void doIt()
     {
         // set schema name
 //        FLYWAY.setSchemas("FLYWAY");

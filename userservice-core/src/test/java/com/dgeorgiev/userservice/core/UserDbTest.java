@@ -1,5 +1,6 @@
 package com.dgeorgiev.userservice.core;
 
+import com.dgeorgiev.IntegrationTest;
 import com.dgeorgiev.userservice.domain.User;
 import com.novarto.sanedbc.core.interpreter.SyncDbInterpreter;
 import com.novarto.sanedbc.core.interpreter.ValidationDbInterpreter;
@@ -13,7 +14,7 @@ import java.sql.DriverManager;
 
 import static org.junit.Assert.*;
 
-public class UserDbTest
+public class UserDbTest extends IntegrationTest
 {
     private static final SyncDbInterpreter DB_INTERPRETER = new SyncDbInterpreter(
             () -> DriverManager.getConnection("jdbc:hsqldb:mem:test", "sa", "")
@@ -24,43 +25,47 @@ public class UserDbTest
     );
 
 
-    @Before
-    public void setUp()
-    {
-        DB_INTERPRETER.submit(UserDb.createUsersDB());
-    }
-
     @After
     public void cleanUp()
     {
-        DB_INTERPRETER.submit(new EffectOp("DROP TABLE USERS"));
+        DB_INTERPRETER.submit(new EffectOp("DELETE FROM USERS"));
     }
 
     @Test
     public void insertUserGivenAccurateDetails()
     {
-        Validation<Exception, Integer> userID = VALIDATION_INTERPRETER.submit(UserDb.insertUser("name", "email", "1234"));
+        Validation<Exception, Integer> userID = VALIDATION_INTERPRETER.submit(
+                UserDb.insertUser("name", "email", "1234"))
+                .f();
         assertTrue(userID.isSuccess());
 
         User user = DB_INTERPRETER.submit(UserDb.selectUserByID(userID.success())).some();
         assertEquals("email", user.email);
         assertEquals("name", user.name);
 
-        Validation<Exception, Integer> res = VALIDATION_INTERPRETER.submit(UserDb.insertUser("otherName", "email", "1234"));
+        Validation<Exception, Integer> res = VALIDATION_INTERPRETER.submit(
+                UserDb.insertUser("otherName", "email", "1234"))
+                .f();
         assertTrue(res.isFail());
     }
 
     @Test
     public void insertUserGivenInaccurateDetails()
     {
-        Validation<Exception, Integer> userID = VALIDATION_INTERPRETER.submit(UserDb.insertUser(null, "email", "1234"));
+        Validation<Exception, Integer> userID = VALIDATION_INTERPRETER.submit(
+                UserDb.insertUser(null, "email", "1234"))
+                .f();
         assertTrue(userID.isFail());
 
-        userID = VALIDATION_INTERPRETER.submit(UserDb.insertUser("name", null, "1234"));
+        userID = VALIDATION_INTERPRETER.submit(
+                UserDb.insertUser("name", null, "1234"))
+                .f();
         assertTrue(userID.isFail());
 
 
-        userID = VALIDATION_INTERPRETER.submit(UserDb.insertUser("name", "email", null));
+        userID = VALIDATION_INTERPRETER.submit(
+                UserDb.insertUser("name", "email", null))
+                .f();
         assertTrue(userID.isFail());
     }
 
@@ -69,7 +74,9 @@ public class UserDbTest
     {
         Integer userID = DB_INTERPRETER.submit(UserDb.insertUser("name", "email", "1234"));
 
-        Validation<Exception, Integer> rowsAffected = VALIDATION_INTERPRETER.submit(UserDb.updateUserName("email", "newName"));
+        Validation<Exception, Integer> rowsAffected = VALIDATION_INTERPRETER.submit(
+                UserDb.updateUserName("email", "newName"))
+                .f();
         assertTrue(rowsAffected.isSuccess());
         assertEquals(1, rowsAffected.success().intValue());
 

@@ -12,6 +12,7 @@ import java.io.IOException;
 import static fj.Function.identity;
 import static fj.data.Validation.validation;
 
+@SuppressWarnings("serial")
 public abstract class JsonService<A, B> extends BaseService<A>
 {
 

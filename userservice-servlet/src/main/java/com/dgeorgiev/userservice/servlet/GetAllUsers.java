@@ -1,30 +1,41 @@
 package com.dgeorgiev.userservice.servlet;
 
+import com.dgeorgiev.userservice.core.UserDb;
+import com.dgeorgiev.userservice.domain.User;
 import com.dgeorgiev.userservice.servlet.util.JsonService;
-import com.dgeorgiev.userservice.servlet.util.Validations;
+import com.dgeorgiev.userservice.servlet.util.PagingParams;
+import com.dgeorgiev.userservice.servlet.util.Throwables;
 import fj.P1;
-import fj.Unit;
 import fj.data.List;
 import fj.data.Validation;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static fj.P.lazy;
-import static fj.data.List.arrayList;
-import static fj.data.Validation.success;
+import static com.dgeorgiev.userservice.core.config.Configuration.DBI;
+import static com.dgeorgiev.userservice.servlet.util.Validations.exists;
+import static com.dgeorgiev.userservice.servlet.util.Validations.mapLeft;
 
-public class GetAllUsers extends JsonService<Unit, List<Integer>>
+@SuppressWarnings("serial")
+public class GetAllUsers extends JsonService<PagingParams, List<User>>
 {
 
-    @Override public Validation<String, Unit> validate(HttpServletRequest req)
+    @Override public Validation<String, PagingParams> validate(HttpServletRequest req)
     {
-        return Validations.noOp();
+        Validation<String, Integer> limit = exists(req, "limit")
+                .bind(str -> mapLeft(Validation.parseInt(str), Throwables::getStackTraceAsString));
+
+        Validation<String, Integer> offset = exists(req, "offset")
+                .bind(str -> mapLeft(Validation.parseInt(str), Throwables::getStackTraceAsString));
+
+        Validation<List<String>, PagingParams> res = offset.accumulate(limit, PagingParams::new);
+        return mapLeft(res, xs -> xs.head());
+
     }
 
 
-    @Override public P1<Validation<Exception, List<Integer>>> service(Unit in)
+    @Override public P1<Validation<Exception, List<User>>> service(PagingParams in)
     {
-        return lazy(() -> success(arrayList(1, 2, 3)));
+        return DBI.submit(UserDb.selectAll(in.offset, in.limit));
     }
 
 

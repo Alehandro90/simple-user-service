@@ -7,6 +7,7 @@ import com.novarto.sanedbc.core.ops.SelectOp;
 import com.novarto.sanedbc.core.ops.UpdateOp;
 import fj.Unit;
 import fj.control.db.DB;
+import fj.data.List;
 import fj.data.Option;
 
 import static com.dgeorgiev.userservice.core.config.Configuration.PASSWORD_HASHER;
@@ -15,16 +16,6 @@ import static com.novarto.sanedbc.core.ops.DbOps.unique;
 public class UserDb
 {
 
-    public static DB<Unit> createUsersDB()
-    {
-        return new EffectOp(
-                "CREATE TABLE USERS " +
-                        "(ID INTEGER PRIMARY KEY IDENTITY," +
-                        " NAME NVARCHAR(100) NOT NULL," +
-                        " EMAIL NVARCHAR(100) NOT NULL UNIQUE," +
-                        " PASSWORD NVARCHAR(300) NOT NULL)"
-        );
-    }
 
     public static DB<Integer> insertUser(String name, String email, String password)
     {
@@ -82,5 +73,18 @@ public class UserDb
         );
 
         return unique(dbPass).map(passOp -> passOp.isSome() && PASSWORD_HASHER.validatePassword(pass, passOp.some()));
+    }
+
+    public static DB<List<User>> selectAll(int offset, int limit)
+    {
+        return new SelectOp.FjList<>(
+                "SELECT ID, NAME, EMAIL FROM USERS OFFSET ? LIMIT ?",
+                ps -> {
+                    ps.setInt(1, offset);
+                    ps.setInt(2, limit);
+                },
+                rs -> new User(rs.getInt(1), rs.getString(2), rs.getString(3))
+        );
+
     }
 }

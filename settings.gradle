@@ -1,2 +1,4 @@
 rootProject.name = 'simple-user-service'
 include 'userservice-core'
+include 'userservice-servlet'
+

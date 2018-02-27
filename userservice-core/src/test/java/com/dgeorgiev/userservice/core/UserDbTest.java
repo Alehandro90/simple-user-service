@@ -7,7 +7,6 @@ import com.novarto.sanedbc.core.interpreter.ValidationDbInterpreter;
 import com.novarto.sanedbc.core.ops.EffectOp;
 import fj.data.Validation;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.DriverManager;

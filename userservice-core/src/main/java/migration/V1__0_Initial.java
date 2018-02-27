@@ -7,6 +7,7 @@ import org.flywaydb.core.api.migration.jdbc.JdbcMigration;
 
 import java.sql.Connection;
 
+@SuppressWarnings("checkstyle:TypeName")
 public class V1__0_Initial implements JdbcMigration
 {
     @Override public void migrate(Connection c) throws Exception

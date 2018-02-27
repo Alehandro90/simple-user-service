@@ -8,7 +8,6 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.zaxxer.hikari.HikariDataSource;
 
-import java.sql.DriverManager;
 import java.util.Properties;
 
 public class Configuration
@@ -19,7 +18,8 @@ public class Configuration
 
     private static final HikariDataSource DS;
 
-    static {
+    static
+    {
         DS = Hikari.createHikari("jdbc:hsqldb:mem:test", "sa", "", new Properties());
     }
 
@@ -35,9 +35,9 @@ public class Configuration
 
     public static final FlywayMigrator MIGRATOR = new FlywayMigrator("migration", DS);
 
-    public static String DEFAULT_ADMIN = CONFIG.getString("userservice.core.defaultAdmin.name");
-    public static String DEFAULT_ADMIN_EMAIL = CONFIG.getString("userservice.core.defaultAdmin.email");
-    public static String DEFAULT_ADMIN_PASSWORD = CONFIG.getString("userservice.core.defaultAdmin.password");
+    public static final String DEFAULT_ADMIN = CONFIG.getString("userservice.core.defaultAdmin.name");
+    public static final String DEFAULT_ADMIN_EMAIL = CONFIG.getString("userservice.core.defaultAdmin.email");
+    public static final String DEFAULT_ADMIN_PASSWORD = CONFIG.getString("userservice.core.defaultAdmin.password");
 
 
 

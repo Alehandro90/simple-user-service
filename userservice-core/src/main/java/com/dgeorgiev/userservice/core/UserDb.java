@@ -1,11 +1,9 @@
 package com.dgeorgiev.userservice.core;
 
 import com.dgeorgiev.userservice.domain.User;
-import com.novarto.sanedbc.core.ops.EffectOp;
 import com.novarto.sanedbc.core.ops.InsertGenKeysOp;
 import com.novarto.sanedbc.core.ops.SelectOp;
 import com.novarto.sanedbc.core.ops.UpdateOp;
-import fj.Unit;
 import fj.control.db.DB;
 import fj.data.List;
 import fj.data.Option;
